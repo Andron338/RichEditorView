@@ -54,8 +54,21 @@ public class RichEditorWebView: WKWebView {
     /// Input accessory view to display over they keyboard.
     /// Defaults to nil
     open override var inputAccessoryView: UIView? {
-        get { return webView.accessoryView }
-        set { webView.accessoryView = newValue }
+        get {
+            if #available(iOS 13.0, *) {
+                return webView.accessoryView
+            } else {
+                return webView.getCustomInputAccessoryView()
+                
+            }
+        }
+        set {
+            if #available(iOS 13.0, *) {
+                webView.accessoryView = newValue
+            } else {
+                webView.addInputAccessoryView(toolbar: newValue)
+            }
+        }
     }
     
     /// The internal WKWebView that is used to display the text.
