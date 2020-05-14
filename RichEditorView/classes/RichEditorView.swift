@@ -59,7 +59,6 @@ public class RichEditorWebView: WKWebView {
                 return webView.accessoryView
             } else {
                 return webView.getCustomInputAccessoryView()
-                
             }
         }
         set {

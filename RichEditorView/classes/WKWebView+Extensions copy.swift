@@ -7,25 +7,12 @@
 //
 import WebKit
 
+var toolBarHandle: UInt8 = 0
+
 extension WKWebView {
-    private struct ToolBarHandleProperties {
-        static var toolBarHandle: UInt8 = 0
-    }
-    
-    var toolBarHandle: UInt8 {
-        get {
-            return ToolBarHandleProperties.toolBarHandle
-        }
-        
-        set {
-            ToolBarHandleProperties.toolBarHandle = newValue
-        }
-    }
-    
-    func addInputAccessoryView(toolbar: UIView?) {
+       
+   func addInputAccessoryView(toolbar: UIView?) {
         guard let toolbar = toolbar else {return}
-        
-        var ToolbarHandle: UInt8 = 0
         objc_setAssociatedObject(self, &toolBarHandle, toolbar, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
         var candidateView: UIView? = nil
@@ -74,4 +61,4 @@ extension WKWebView {
         let customInputAccessory = objc_getAssociatedObject(webView, &toolBarHandle)
         return customInputAccessory as? UIView
     }
-} 
+}
