@@ -8,11 +8,25 @@
 import WebKit
 
 extension WKWebView {
-    var ToolbarHandle: UInt8 = 0
+    private struct ToolBarHandleProperties {
+        static var toolBarHandle: UInt8 = 0
+    }
+    
+    var toolBarHandle: UInt8 {
+        get {
+            return ToolBarHandleProperties.toolBarHandle
+        }
+        
+        set {
+            ToolBarHandleProperties.toolBarHandle = newValue
+        }
+    }
     
     func addInputAccessoryView(toolbar: UIView?) {
         guard let toolbar = toolbar else {return}
-        objc_setAssociatedObject(self, &ToolbarHandle, toolbar, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        
+        var ToolbarHandle: UInt8 = 0
+        objc_setAssociatedObject(self, &toolBarHandle, toolbar, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
         var candidateView: UIView? = nil
         for view in self.scrollView.subviews {
@@ -57,7 +71,7 @@ extension WKWebView {
 
         guard let webView = superWebView else {return nil}
 
-        let customInputAccessory = objc_getAssociatedObject(webView, &ToolbarHandle)
+        let customInputAccessory = objc_getAssociatedObject(webView, &toolBarHandle)
         return customInputAccessory as? UIView
     }
-} `
+} 

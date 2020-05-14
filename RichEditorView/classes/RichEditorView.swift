@@ -158,8 +158,9 @@ public class RichEditorWebView: WKWebView {
         webView.frame = bounds
         webView.navigationDelegate = self
         webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        webView.configuration.dataDetectorTypes = WKDataDetectorTypes()
-        
+        if #available(iOS 10.0, *) {
+            webView.configuration.dataDetectorTypes = WKDataDetectorTypes()
+        }
         webView.scrollView.isScrollEnabled = isScrollEnabled
         webView.scrollView.showsHorizontalScrollIndicator = false
         webView.scrollView.bounces = false
@@ -169,7 +170,9 @@ public class RichEditorWebView: WKWebView {
         
         if let filePath = Bundle(for: RichEditorView.self).path(forResource: "rich_editor", ofType: "html") {
             let url = URL(fileURLWithPath: filePath, isDirectory: false)
-            webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+            if #available(iOS 9.0, *) {
+                webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+            }
         }
         
         tapRecognizer.addTarget(self, action: #selector(viewWasTapped))
@@ -309,6 +312,10 @@ public class RichEditorWebView: WKWebView {
         runJS("RE.setUnderline()")
     }
     
+    public func checkbox() {
+        runJS("RE.setCheckbox()")
+    }
+    
     public func setTextColor(_ color: UIColor) {
         runJS("RE.prepareInsert()")
         runJS("RE.setTextColor('\(color.hex)')")
@@ -368,9 +375,9 @@ public class RichEditorWebView: WKWebView {
             // Remember, both poster and src can be base64 encoded
             runJS("RE.prepareInsert()")
             var theJS: String
-            if offline == true {
+            if isBase64 == true {
                 // Assuming vidURL already in base64
-                theJS = "<div><video class='video-js' controls preload='auto'  data-setup='{}'><source src='\(vidURL)'></source></video></div>"
+                theJS = "<div><video class='video-js' controls preload='auto'  data-setup='{}'><source src='\(video)'></source></video></div>"
             } else {
                 // Upload to server the base64 if isBase64 == true. Utilize the IDs and Video tags to your advantage. On Python web server, I use BeautifulSoup4. Use the base64 to save video in S3 and replace src with your new S3 video. Or you could just save in database.
                 let uuid = UUID().uuidString
@@ -416,7 +423,6 @@ public class RichEditorWebView: WKWebView {
     
     public func addRowToTable() { runJS("RE.addRowToTable()") }
     public func deleteRowFromTable() { runJS("RE.deleteRowFromTable()") }
-    public func addRowToTable() { runJS("RE.addRowToTable()") }
     public func deleteColumnFromTable() { runJS("RE.addRowToTable()") }
     
     
